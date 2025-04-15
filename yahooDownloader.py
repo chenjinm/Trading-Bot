@@ -2,7 +2,7 @@ import requests
 import numpy as np
 import pandas as pd
 import datetime as dt
-import torch
+from sklearn.preprocessing import MinMaxScaler
 
 # A browser User-Agent header to help bypass simple scraping protections.
 HEADERS = {
@@ -17,9 +17,9 @@ class YahooDownloader:
         self.start_date = start_date
         self.end_date = end_date
         self.ticker_list = ticker_list
-        self.scaler = MinMaxScaler()
+        self.scaler =MinMaxScaler()
 
-    def get_intraday_data(ticker, start_date, end_date, interval = "1h"):
+    def get_intraday_data(self, ticker, start_date, end_date, interval = "1h"):
         base_url = "https://query1.finance.yahoo.com"
         url = f"{base_url}/v8/finance/chart/{ticker}"
         period1 = int(pd.Timestamp(start_date).timestamp())
@@ -70,7 +70,7 @@ class YahooDownloader:
 
         return df
 
-    def compute_intraday_indicators(df):
+    def compute_intraday_indicators(self, df):
         """
         Compute technical indicators from intraday data:
         - MA20: 20-period moving average of 'close'
@@ -96,7 +96,7 @@ class YahooDownloader:
         return indicators
 
     def fetch_data(self, proxy = None, auto_adjust = False, interval = '1h') -> pd.DataFrame:
-        fulldata_df = pd.DataFrame()
+        # fulldata_df = pd.DataFrame()
         for ticker in self.ticker_list:
             print(f"Fetching 1h data for {ticker} ...")
             stock_df = self.get_intraday_data(ticker, self.start_date, self.end_date,
@@ -109,8 +109,19 @@ class YahooDownloader:
                 print(f"Not enough data to compute indicators for {ticker}.")
                 continue
             norm_values = self.scaler.fit_transform(indicators.values)
-            stock_df = pd.dataFrame(norm_values,
+            stock_df = pd.DataFrame(norm_values,
                                     columns = ['MA20', 'MACD', 'Signal_Line', 'Volume'])
             stock_df.insert(0, 'Ticker', ticker)
-            fulldata_df = pd.concat([fulldata_df, stock_df])
-        return fulldata_df
+            print(stock_df)
+            # fulldata_df = pd.concat([fulldata_df, stock_df])
+            stock_df.to_csv(f"./data/stocks/{ticker}.csv")
+        return
+
+start_date = "2023-05-01"
+end_date = "2025-03-31"
+with open('djia30.txt', 'r') as file:
+    line = file.readline().strip()  # Read the first line and remove any leading/trailing whitespace
+    ticker_list = line.split(', ')  # Split the line by commas
+print(ticker_list)
+downloader = YahooDownloader(start_date, end_date, ticker_list)
+downloader.fetch_data()
