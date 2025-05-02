@@ -24,7 +24,7 @@ The repository includes both raw data folders and the notebooks that generate th
   - `initial_validation_data/`  
   - `initial_test_data/`  
 
-- ** Forecasts CSVs**    
+- **Forecasts CSVs**    
   - `rolling_one_step_forecasts.csv` — the TFT Transformer's one‐step‐ahead predictions for all DJIA30 symbols.
 
 
