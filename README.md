@@ -1,5 +1,5 @@
 # Transformer & DRL for Stock Prediction and Trading
-This repository contains Jupyter notebooks demonstrating Transformer-based and Deep Reinforcement Learning (DRL) approaches for stock market forecasting and portfolio management for our 10-423/623 Generative AI Course Project.
+This repository contains Jupyter notebooks demonstrating Transformer-based and Deep Reinforcement Learning (DRL) approaches for stock market forecasting and portfolio management.
 
 ## Contents
 
